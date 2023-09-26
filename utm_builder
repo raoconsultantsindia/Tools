@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern UTM Tag Generator</title>
+   <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3f5f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 90%;
+            max-width: 800px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .column {
+            width: 48%;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .param input,
+        .add-custom-param,
+        .generate-button,
+        .result-box {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: #f3f5f9;
+            color: #333333;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .param input {
+            padding: 10px;
+            font-size: 14px;
+            background-color: #f3f5f9;
+        }
+
+        .param input::placeholder {
+            color: #999999;
+        }
+
+        .param input:focus {
+            outline: none;
+        }
+
+        .param input:valid {
+            background-color: #f3f5f9;
+        }
+
+        .add-custom-param,
+        .generate-button,
+        .copy-button,
+        .reset-button {
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .custom-params {
+            margin-top: 20px;
+        }
+
+        .result-box {
+            background-color: #f3f5f9;
+            padding: 15px;
+            text-align: left;
+            overflow-wrap: break-word;
+        }
+
+        pre {
+            margin: 0;
+            white-space: pre-wrap;
+            font-size: 14px;
+        }
+
+        .copied {
+            display: none;
+            background-color: #4CAF50;
+            color: #ffffff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        @media (max-width: 768px) {
+            .column {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="column">
+            <h2>Modern UTM Tag Generator</h2>
+            <div class="param">
+                <input type="url" id="website_url" placeholder="Website URL*" required>
+            </div>
+            <div class="param">
+                <input type="text" id="utm_source" placeholder="Source*" required>
+            </div>
+            <div class="param">
+                <input type="text" id="utm_medium" placeholder="Medium*" required>
+            </div>
+            <div class="param">
+                <input type="text" id="utm_campaign" placeholder="Campaign*" required>
+            </div>
+            <div class="param">
+                <input type="text" id="utm_term" placeholder="Term">
+            </div>
+            <div class="param">
+                <input type="text" id="utm_content" placeholder="Content">
+            </div>
+            
+        </div>
+        <div class="column">
+         <div class="custom-params">
+                <h3>Custom Parameters (Optional)</h3>
+                <div class="param">
+                    <input type="text" id="custom-param-name" placeholder="Parameter Name">
+                    <input type="text" id="custom-param-value" placeholder="Parameter Value">
+                </div>
+                <button class="add-custom-param" onclick="addCustomParam()">+ Add Custom Parameter</button>
+            </div>
+        <button class="generate-button" onclick="generateUTM()">Generate UTM Tag</button>
+            <div class="result-box" id="result"></div>
+            <button class="copy-button" id="copyButton" onclick="copyToClipboard()">Copy to Clipboard</button>
+            <button class="reset-button" onclick="resetForm()">Reset</button>
+            <div class="copied" id="copied">Copied</div>
+        </div>
+    </div>
+
+    <script>
+        function generateUTM() {
+            const websiteURL = document.getElementById('website_url').value.trim();
+            const utmSource = document.getElementById('utm_source').value.trim();
+            const utmMedium = document.getElementById('utm_medium').value.trim();
+            const utmCampaign = document.getElementById('utm_campaign').value.trim();
+            const utmTerm = document.getElementById('utm_term').value.trim();
+            const utmContent = document.getElementById('utm_content').value.trim();
+
+            const utmParams = [
+                `utm_source=${utmSource}`,
+                `utm_medium=${utmMedium}`,
+                `utm_campaign=${utmCampaign}`,
+                `utm_term=${utmTerm}`,
+                `utm_content=${utmContent}`,
+            ];
+
+            // Get custom parameters and values
+            const customParamNames = document.querySelectorAll('#custom-param-name');
+            const customParamValues = document.querySelectorAll('#custom-param-value');
+
+            for (let i = 0; i < customParamNames.length; i++) {
+                const paramName = customParamNames[i].value.trim();
+                const paramValue = customParamValues[i].value.trim();
+
+                if (paramName && paramValue) {
+                    utmParams.push(`${paramName}=${paramValue}`);
+                }
+            }
+
+            const utmTag = utmParams.join('&');
+            const finalURL = `${websiteURL}?${utmTag}`;
+
+            const resultBox = document.getElementById('result');
+            resultBox.innerHTML = `
+                <p>Generated UTM Tag:</p>
+                <pre>${finalURL}</pre>
+            `;
+
+            // Enable the "Copy to Clipboard" button
+            const copyButton = document.getElementById('copyButton');
+            copyButton.disabled = false;
+        }
+
+        function addCustomParam() {
+            const customParamsDiv = document.querySelector('.custom-params');
+            const param = document.createElement('div');
+            param.classList.add('param');
+
+            param.innerHTML = `
+                <input type="text" id="custom-param-name" placeholder="Parameter Name">
+                <input type="text" id="custom-param-value" placeholder="Parameter Value">
+            `;
+
+            customParamsDiv.appendChild(param);
+        }
+
+        function copyToClipboard() {
+            const resultBox = document.getElementById('result');
+            const finalURL = resultBox.querySelector('pre').textContent;
+
+            const input = document.createElement('input');
+            input.value = finalURL;
+            document.body.appendChild(input);
+            input.select();
+            document.execCommand('copy');
+            document.body.removeChild(input);
+
+            const copiedMessage = document.getElementById('copied');
+            copiedMessage.style.display = 'inline-block';
+            setTimeout(function() {
+                copiedMessage.style.display = 'none';
+            }, 2000);
+        }
+
+        function resetForm() {
+            document.getElementById('website_url').value = '';
+            document.getElementById('utm_source').value = '';
+            document.getElementById('utm_medium').value = '';
+            document.getElementById('utm_campaign').value = '';
+            document.getElementById('utm_term').value = '';
+            document.getElementById('utm_content').value = '';
+
+            const customParamsDiv = document.querySelector('.custom-params');
+
+            // Remove custom parameter input fields, keeping the first one
+            const customParamInputs = customParamsDiv.querySelectorAll('.param');
+            for (let i = customParamInputs.length - 1; i > 0; i--) {
+                customParamsDiv.removeChild(customParamInputs[i]);
+            }
+
+            // Clear text in the first custom parameter input fields
+            const firstCustomParamInputs = customParamInputs[0].querySelectorAll('input');
+            for (let i = 0; i < firstCustomParamInputs.length; i++) {
+                firstCustomParamInputs[i].value = '';
+            }
+
+            const resultBox = document.getElementById('result');
+            resultBox.innerHTML = '';
+
+            const copiedMessage = document.getElementById('copied');
+            copiedMessage.style.display = 'none';
+
+            const copyButton = document.getElementById('copyButton');
+            copyButton.disabled = true;
+        }
+    </script>
+    
+</body>
+</html>
