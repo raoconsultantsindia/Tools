@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LTV to CAC Ratio Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3f5f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: #f3f5f9;
+            color: #333333;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>LTV to CAC Ratio Calculator</h2>
+        <label for="customer_lifetime_value">Customer Lifetime Value (LTV):</label>
+        <input type="number" id="customer_lifetime_value" placeholder="Enter LTV" required>
+        <label for="customer_acquisition_cost">Customer Acquisition Cost (CAC):</label>
+        <input type="number" id="customer_acquisition_cost" placeholder="Enter CAC" required>
+        <button onclick="calculateRatio()">Calculate Ratio</button>
+        <button onclick="resetForm()" style="margin-top: 10px;">Reset</button>
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        function calculateRatio() {
+            const ltv = parseFloat(document.getElementById('customer_lifetime_value').value);
+            const cac = parseFloat(document.getElementById('customer_acquisition_cost').value);
+
+            const ratio = ltv / cac;
+
+            if (!isNaN(ratio) && ratio >= 0) {
+                document.getElementById('result').textContent = `LTV to CAC Ratio: ${ratio.toFixed(2)}`;
+            } else {
+                document.getElementById('result').textContent = 'Invalid input. Please check your values.';
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('customer_lifetime_value').value = '';
+            document.getElementById('customer_acquisition_cost').value = '';
+            document.getElementById('result').textContent = '';
+        }
+    </script>
+</body>
+</html>
