@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROAS Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3f5f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .container {
+            background-color: #ffffff;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        label {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .result {
+            margin-top: 20px;
+            text-align: left;
+        }
+        
+        .status {
+            font-weight: bold;
+        }
+        
+        #roasStatus {
+            color: green;
+        }
+        
+        #roasStatus.error {
+            color: red;
+        }
+        
+         canvas {
+            overflow-y: hidden;
+            overflow-x: hidden;
+            width: 100%;
+            margin: 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ROAS Calculator</h1>
+        <div class="input-group">
+            <label for="revenue">Revenue:</label>
+            <input type="number" id="revenue" placeholder="Enter revenue" step="0.01">
+        </div>
+        <div class="input-group">
+            <label for="adCost">Advertising Cost:</label>
+            <input type="number" id="adCost" placeholder="Enter advertising cost" step="0.01">
+        </div>
+        <div class="input-group">
+            <label for="targetROAS">Target ROAS:</label>
+            <input type="number" id="targetROAS" placeholder="Enter target ROAS" step="0.01">
+        </div>
+        <button id="calculate">Calculate ROAS</button>
+        <button id="reset">Reset</button>
+        <div id="result" class="result">
+            <p>Your ROAS is: <span id="roasValue">0</span></p>
+            <p class="status" id="roasStatus"></p>
+        </div>
+    </div>
+    <canvas id="canvas"></canvas>
+    <script src="https://cdn.jsdelivr.net/npm/confetti-js"></script>
+    <script>
+        let W = window.innerWidth;
+        let H = window.innerHeight;
+        const canvas = document.getElementById("canvas");
+        const context = canvas.getContext("2d");
+        const maxConfettis = 150;
+        const particles = [];
+
+        const possibleColors = [
+            "DodgerBlue",
+            "OliveDrab",
+            "Gold",
+            "Pink",
+            "SlateBlue",
+            "LightBlue",
+            "Gold",
+            "Violet",
+            "PaleGreen",
+            "SteelBlue",
+            "SandyBrown",
+            "Chocolate",
+            "Crimson"
+        ];
+
+        function randomFromTo(from, to) {
+            return Math.floor(Math.random() * (to - from + 1) + from);
+        }
+
+        function confettiParticle() {
+            this.x = Math.random() * W; // x
+            this.y = Math.random() * H - H; // y
+            this.r = randomFromTo(11, 33); // radius
+            this.d = Math.random() * maxConfettis + 11;
+            this.color =
+                possibleColors[Math.floor(Math.random() * possibleColors.length)];
+            this.tilt = Math.floor(Math.random() * 33) - 11;
+            this.tiltAngleIncremental = Math.random() * 0.07 + 0.05;
+            this.tiltAngle = 0;
+
+            this.draw = function() {
+                context.beginPath();
+                context.lineWidth = this.r / 2;
+                context.strokeStyle = this.color;
+                context.moveTo(this.x + this.tilt + this.r / 3, this.y);
+                context.lineTo(this.x + this.tilt, this.y + this.tilt + this.r / 5);
+                return context.stroke();
+            };
+        }
+
+        function Draw() {
+            const results = [];
+
+            // Magical recursive functional love
+            requestAnimationFrame(Draw);
+
+            context.clearRect(0, 0, W, window.innerHeight);
+
+            for (var i = 0; i < maxConfettis; i++) {
+                results.push(particles[i].draw());
+            }
+
+            let particle = {};
+            let remainingFlakes = 0;
+            for (var i = 0; i < maxConfettis; i++) {
+                particle = particles[i];
+
+                particle.tiltAngle += particle.tiltAngleIncremental;
+                particle.y += (Math.cos(particle.d) + 3 + particle.r / 2) / 2;
+                particle.tilt = Math.sin(particle.tiltAngle - i / 3) * 15;
+
+                if (particle.y <= H) remainingFlakes++;
+
+                // If a confetti has fluttered out of view,
+                // bring it back to above the viewport and let if re-fall.
+                if (particle.x > W + 30 || particle.x < -30 || particle.y > H) {
+                    particle.x = Math.random() * W;
+                    particle.y = -30;
+                    particle.tilt = Math.floor(Math.random() * 10) - 20;
+                }
+            }
+
+            return results;
+        }
+
+        window.addEventListener(
+            "resize",
+            function() {
+                W = window.innerWidth;
+                H = window.innerHeight;
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            },
+            false
+        );
+
+        // Push new confetti objects to `particles[]`
+        for (var i = 0; i < maxConfettis; i++) {
+            particles.push(new confettiParticle());
+        }
+
+        // Event listeners for buttons
+        const calculateButton = document.getElementById("calculate");
+        const resetButton = document.getElementById("reset");
+
+        calculateButton.addEventListener("click", calculateROAS);
+        resetButton.addEventListener("click", resetForm);
+
+        function calculateROAS() {
+            const revenue = parseFloat(document.getElementById("revenue").value);
+            const adCost = parseFloat(document.getElementById("adCost").value);
+            const targetROAS = parseFloat(document.getElementById("targetROAS").value);
+
+            const roasValueSpan = document.getElementById("roasValue");
+            const roasStatus = document.getElementById("roasStatus");
+            const confettiCanvas = document.getElementById("canvas");
+
+            if (isNaN(revenue) || isNaN(adCost)) {
+                roasStatus.textContent = "Please enter valid numbers.";
+                roasStatus.classList.add("error");
+                roasValueSpan.textContent = "N/A";
+            } else {
+                const roas = (revenue / adCost).toFixed(2);
+                roasValueSpan.textContent = roas;
+
+                if (!isNaN(targetROAS)) {
+                    if (roas >= targetROAS) {
+                        roasStatus.textContent = "Success! Your campaign is meeting or exceeding the target ROAS.";
+                        roasStatus.classList.remove("error");
+                        confettiCanvas.style.display = "block";
+                        const confettiSettings = { target: 'canvas' };
+                        const confetti = new ConfettiGenerator(confettiSettings);
+                        confetti.render();
+                    } else {
+                        roasStatus.textContent = "Your campaign is falling short of the target ROAS.";
+                        roasStatus.classList.add("error");
+                        confettiCanvas.style.display = "none";
+                    }
+                } else {
+                    roasStatus.textContent = "";
+                    confettiCanvas.style.display = "none";
+                }
+            }
+        }
+
+        function resetForm() {
+            document.getElementById("revenue").value = "";
+            document.getElementById("adCost").value = "";
+            document.getElementById("targetROAS").value = "";
+            document.getElementById("roasValue").textContent = "0";
+            document.getElementById("roasStatus").textContent = "";
+            document.getElementById("canvas").style.display = "none";
+            confetti.clear();
+        }
+    </script>
+</body>
+</html>
