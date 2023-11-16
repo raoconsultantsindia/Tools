@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROI Calculator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            display: flex;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .inputs {
+            flex: 1;
+            padding: 20px;
+            background-color: #f2f2f2;
+        }
+
+        .results {
+            flex: 1;
+            padding: 20px;
+            background-color: #fff;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-size: 16px;
+        }
+    </style>
+    <script>
+        function calculateROI() {
+            // Get input values
+            var costOfInvestment = parseFloat(document.getElementById('costOfInvestment').value);
+            var netProfit = parseFloat(document.getElementById('netProfit').value);
+            var investmentDuration = parseInt(document.getElementById('investmentDuration').value);
+
+            // Check if inputs are valid
+            if (isNaN(costOfInvestment) || isNaN(netProfit) || isNaN(investmentDuration) || investmentDuration <= 0) {
+                alert('Please enter valid numbers for all fields.');
+                return;
+            }
+
+            // Calculate ROI
+            var totalInvestmentGain = netProfit + costOfInvestment;
+            var annualROI = (netProfit / costOfInvestment) * 100 / investmentDuration;
+            var roi = (netProfit / costOfInvestment) * 100;
+
+            // Display result
+            document.getElementById('totalInvestmentGain').innerHTML = 'Total Investment Gain: $' + totalInvestmentGain.toFixed(2);
+            document.getElementById('roi').innerHTML = 'Return on Investment (ROI): ' + roi.toFixed(2) + '%';
+            document.getElementById('annualROI').innerHTML = 'Annual ROI: ' + annualROI.toFixed(2) + '%';
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="inputs">
+            <h2>Investment Details</h2>
+            <label for="costOfInvestment">Cost of Investment ($):</label>
+            <input type="text" id="costOfInvestment" placeholder="Enter cost">
+            <label for="netProfit">Net Profit ($):</label>
+            <input type="text" id="netProfit" placeholder="Enter profit">
+            <label for="investmentDuration">Duration of Investment (years):</label>
+            <input type="text" id="investmentDuration" placeholder="Enter duration">
+            <button onclick="calculateROI()">Calculate ROI</button>
+        </div>
+        <div class="results">
+            <h2>Results</h2>
+            <div id="totalInvestmentGain"></div>
+            <div id="roi"></div>
+            <div id="annualROI"></div>
+        </div>
+    </div>
+</body>
+</html>
