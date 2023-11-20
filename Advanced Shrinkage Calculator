@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shrinkage Calculator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #calculator {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 600px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        #header {
+            margin-bottom: 20px;
+        }
+
+        .row {
+            display: flex;
+            gap: 20px;
+        }
+
+        .column {
+            display: flex;
+            flex-direction: column;
+            width: 50%;
+        }
+
+        h2, h3 {
+            color: #333;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            color: #555;
+        }
+
+        input, select {
+            width: calc(100% - 22px);
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #results {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div id="calculator">
+    <div id="header">
+        <h2>Shrinkage Calculator</h2>
+        <label for="frequency">Frequency of Shrinkage:</label>
+        <select id="frequency">
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+            <option value="quarterly">Quarterly</option>
+            <option value="halfYearly">Half-Yearly</option>
+            <option value="yearly">Yearly</option>
+            <option value="custom">Custom (Enter Days)</option>
+        </select>
+        <div id="customDays" style="display: none;">
+            <label for="numberOfDays">Number of Days:</label>
+            <input type="number" id="numberOfDays" placeholder="Enter number of days">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="column">
+            <h3>External Shrinkage (in days)</h3>
+            <!-- External shrinkage inputs -->
+            <label for="sickness">Sickness:</label>
+            <input type="number" id="sickness" placeholder="Enter days">
+
+            <label for="holiday">Holiday:</label>
+            <input type="number" id="holiday" placeholder="Enter days">
+
+            <label for="publicHolidays">Public Holidays:</label>
+            <input type="number" id="publicHolidays" placeholder="Enter days">
+
+            <label for="paidBreaks">Paid Breaks (if applicable):</label>
+            <input type="number" id="paidBreaks" placeholder="Enter days">
+
+            <label for="absenteeism">Absenteeism:</label>
+            <input type="number" id="absenteeism" placeholder="Enter days">
+
+            <label for="lateness">Lateness (or tardiness):</label>
+            <input type="number" id="lateness" placeholder="Enter days">
+        </div>
+
+        <div class="column">
+            <h3>Internal Shrinkage</h3>
+            <!-- Internal shrinkage inputs -->
+            <label for="teamMeetings">Team Meetings:</label>
+            <input type="number" id="teamMeetings" placeholder="Enter days">
+
+            <label for="training">Coaching and Training:</label>
+            <input type="number" id="training" placeholder="Enter days">
+
+            <label for="oneToOnes">One-to-ones:</label>
+            <input type="number" id="oneToOnes" placeholder="Enter days">
+
+            <label for="systemDowntime">System Downtime:</label>
+            <input type="number" id="systemDowntime" placeholder="Enter days">
+
+            <label for="unplannedBreaks">Unplanned Facility Breaks:</label>
+            <input type="number" id="unplannedBreaks" placeholder="Enter days">
+
+            <label for="specialProjects">Special Projects:</label>
+            <input type="number" id="specialProjects" placeholder="Enter days">
+        </div>
+    </div>
+
+    <button onclick="calculateShrinkage()">Calculate Shrinkage</button>
+
+    <div id="results"></div>
+</div>
+
+<script>
+    function calculateShrinkage() {
+        var frequency = document.getElementById("frequency").value;
+
+        var totalWorkingDays;
+        switch (frequency) {
+            case "weekly":
+                totalWorkingDays = 5; // Assuming a 5-day workweek
+                break;
+            case "monthly":
+                totalWorkingDays = 22; // Assuming a 22-day workmonth
+                break;
+            case "quarterly":
+                totalWorkingDays = 66; // Assuming a 66-day work quarter
+                break;
+            case "halfYearly":
+                totalWorkingDays = 132; // Assuming a 132-day work half-year
+                break;
+            case "yearly":
+                totalWorkingDays = 264; // Assuming a 264-day work year
+                break;
+            case "custom":
+                totalWorkingDays = parseFloat(document.getElementById("numberOfDays").value) || 0;
+                break;
+            default:
+                totalWorkingDays = 0;
+        }
+
+        var sickness = parseFloat(document.getElementById("sickness").value) || 0;
+        var holiday = parseFloat(document.getElementById("holiday").value) || 0;
+        var publicHolidays = parseFloat(document.getElementById("publicHolidays").value) || 0;
+        var paidBreaks = parseFloat(document.getElementById("paidBreaks").value) || 0;
+        var absenteeism = parseFloat(document.getElementById("absenteeism").value) || 0;
+        var lateness = parseFloat(document.getElementById("lateness").value) || 0;
+
+        var teamMeetings = parseFloat(document.getElementById("teamMeetings").value) || 0;
+        var training = parseFloat(document.getElementById("training").value) || 0;
+        var oneToOnes = parseFloat(document.getElementById("oneToOnes").value) || 0;
+        var systemDowntime = parseFloat(document.getElementById("systemDowntime").value) || 0;
+        var unplannedBreaks = parseFloat(document.getElementById("unplannedBreaks").value) || 0;
+        var specialProjects = parseFloat(document.getElementById("specialProjects").value) || 0;
+
+        var totalExternalShrinkage = sickness + holiday + publicHolidays + paidBreaks + absenteeism + lateness;
+        var totalInternalShrinkage = teamMeetings + training + oneToOnes + systemDowntime +
+            unplannedBreaks + specialProjects;
+
+        var totalShrinkage = totalExternalShrinkage + totalInternalShrinkage;
+
+        var resultsDiv = document.getElementById("results");
+        resultsDiv.innerHTML = `
+            <h3>Results</h3>
+            <p>Total Shrinkage: ${(totalShrinkage / totalWorkingDays * 100).toFixed(2)}%</p>
+            <p>Total External Shrinkage: ${(totalExternalShrinkage / totalWorkingDays * 100).toFixed(2)}%</p>
+            <p>Total Internal Shrinkage: ${(totalInternalShrinkage / totalWorkingDays * 100).toFixed(2)}%</p>
+        `;
+    }
+
+    // Show/hide the "Number of Days" input based on the frequency selection
+    document.getElementById("frequency").addEventListener("change", function () {
+        var customDaysDiv = document.getElementById("customDays");
+        if (this.value === "custom") {
+            customDaysDiv.style.display = "block";
+        } else {
+            customDaysDiv.style.display = "none";
+        }
+    });
+</script>
+
+</body>
+</html>
