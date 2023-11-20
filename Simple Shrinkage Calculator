@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Team Shrinkage Calculator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .calculator-container {
+            text-align: center;
+            width: 300px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #4CAF50;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            color: #333;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            margin-top: 20px;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .result-container {
+            margin-top: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator-container">
+        <h1>Simple Team Shrinkage Calculator</h1>
+        <label for="totalHours">Total Working Hours:</label>
+        <input type="number" id="totalHours" placeholder="Enter total working hours">
+
+        <label for="plannedShrinkage">Planned Shrinkage (in hours):</label>
+        <input type="number" id="plannedShrinkage" placeholder="Enter planned shrinkage in hours">
+
+        <label for="unplannedShrinkage">Unplanned Shrinkage (in hours):</label>
+        <input type="number" id="unplannedShrinkage" placeholder="Enter unplanned shrinkage in hours">
+
+        <button onclick="calculateShrinkage()">Calculate Shrinkage</button>
+
+        <div id="result" class="result-container"></div>
+    </div>
+
+    <script>
+        function calculateShrinkage() {
+            // Get input values
+            var totalHours = parseFloat(document.getElementById("totalHours").value);
+            var plannedShrinkage = parseFloat(document.getElementById("plannedShrinkage").value);
+            var unplannedShrinkage = parseFloat(document.getElementById("unplannedShrinkage").value);
+
+            // Validate input
+            if (isNaN(totalHours) || isNaN(plannedShrinkage) || isNaN(unplannedShrinkage)) {
+                alert("Please enter valid numeric values for all fields.");
+                return;
+            }
+
+            // Calculate total shrinkage
+            var totalShrinkage = (plannedShrinkage + unplannedShrinkage) / totalHours * 100;
+
+            // Display result
+            var resultContainer = document.getElementById("result");
+            resultContainer.innerHTML = "Total Shrinkage: " + totalShrinkage.toFixed(2) + " %";
+        }
+    </script>
+</body>
+</html>
