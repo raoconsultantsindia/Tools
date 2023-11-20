@@ -149,13 +149,13 @@
         </div>
     </div>
 
-    <button onclick="calculateShrinkage()">Calculate Shrinkage</button>
+    <button onclick="calculateAdvancedShrinkage()">Calculate Shrinkage</button>
 
     <div id="results"></div>
 </div>
 
 <script>
-    function calculateShrinkage() {
+    function calculateAdvancedShrinkage() {
         var frequency = document.getElementById("frequency").value;
 
         var totalWorkingDays;
